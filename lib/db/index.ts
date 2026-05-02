@@ -30,3 +30,10 @@ export {
   type ChatMessage,
   type NewChatMessage,
 } from "./schema/chat"
+
+// MCP schema
+export {
+  mcpApiKeys,
+  type McpApiKey,
+  type NewMcpApiKey,
+} from "./schema/mcp"

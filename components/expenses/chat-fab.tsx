@@ -10,7 +10,7 @@ export function ChatFAB() {
   return (
     <motion.button
       onClick={toggleChat}
-      className="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow"
+      className="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-lg hidden lg:flex items-center justify-center hover:shadow-xl transition-shadow"
       whileHover={{ scale: 1.06 }}
       whileTap={{ scale: 0.94 }}
       animate={isOpen ? { rotate: 20 } : { rotate: 0 }}

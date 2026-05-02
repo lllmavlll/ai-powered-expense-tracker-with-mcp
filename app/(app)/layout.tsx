@@ -1,5 +1,6 @@
-import { Sidebar } from "@/components/layout/sidebar"
+import { Sidebar, MobileTopbar } from "@/components/layout/sidebar"
 import { ChatPanel } from "@/components/layout/chat-panel"
+import { TimezoneSync } from "@/components/layout/timezone-sync"
 
 export default function AppLayout({
   children,
@@ -8,10 +9,14 @@ export default function AppLayout({
 }) {
   return (
     <div className="flex h-screen overflow-hidden">
+      <TimezoneSync />
       <Sidebar />
-      <div className="flex flex-1 overflow-hidden">
-        <main className="flex-1 min-w-0 overflow-y-auto">{children}</main>
-        <ChatPanel />
+      <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
+        <MobileTopbar />
+        <div className="flex flex-1 min-w-0 overflow-hidden">
+          <main className="flex-1 min-w-0 overflow-y-auto">{children}</main>
+          <ChatPanel />
+        </div>
       </div>
     </div>
   )

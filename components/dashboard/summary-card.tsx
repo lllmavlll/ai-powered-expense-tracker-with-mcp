@@ -29,20 +29,24 @@ export function SummaryCard({
       transition={{ duration: 0.3, delay: index * 0.08, ease: "easeOut" }}
     >
       <Card className="hover:shadow-sm transition-shadow">
-        <CardContent className="p-5">
-          <div className="flex items-start justify-between">
-            <div className="space-y-1">
+        <CardContent className="p-4 sm:p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="space-y-1 min-w-0">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                 {title}
               </p>
-              <p className="text-2xl font-bold tracking-tight">{value}</p>
+              <p className="text-xl sm:text-2xl font-bold tracking-tight truncate">
+                {value}
+              </p>
               {subtitle && (
-                <p className="text-xs text-muted-foreground">{subtitle}</p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {subtitle}
+                </p>
               )}
             </div>
             <div
               className={cn(
-                "w-9 h-9 rounded-lg flex items-center justify-center",
+                "w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0",
                 iconClassName ?? "bg-primary/10"
               )}
             >

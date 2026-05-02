@@ -43,19 +43,19 @@ export default function DashboardPage() {
   const avgPerDay = count > 0 ? Math.round(totalThisMonth / new Date().getDate()) : 0
 
   return (
-    <div className="p-6 space-y-6 max-w-5xl">
+    <div className="p-4 sm:p-6 space-y-5 sm:space-y-6 max-w-5xl">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold tracking-tight">
+        <h1 className="text-lg sm:text-xl font-bold tracking-tight">
           Good morning{session?.user?.name ? `, ${session.user.name.split(" ")[0]}` : ""}
         </h1>
-        <p className="text-sm text-muted-foreground mt-0.5">
+        <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
           Here&apos;s your spending overview for {new Date().toLocaleString("en-IN", { month: "long", year: "numeric" })}
         </p>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         <SummaryCard
           title="This Month"
           value={`₹${totalThisMonth.toLocaleString()}`}

@@ -35,7 +35,7 @@ export function PreferencesForm() {
         </CardHeader>
         <CardContent className="space-y-5">
           {/* Currency */}
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
             <div>
               <Label className="text-sm font-medium">Currency</Label>
               <p className="text-xs text-muted-foreground mt-0.5">
@@ -43,7 +43,7 @@ export function PreferencesForm() {
               </p>
             </div>
             <Select value={currency} onValueChange={(v) => v !== null && setCurrency(v)}>
-              <SelectTrigger className="w-36 h-8 text-sm">
+              <SelectTrigger className="w-full sm:w-36 h-9 sm:h-8 text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -58,7 +58,7 @@ export function PreferencesForm() {
           <Separator />
 
           {/* Date Format */}
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
             <div>
               <Label className="text-sm font-medium">Date Format</Label>
               <p className="text-xs text-muted-foreground mt-0.5">
@@ -66,7 +66,7 @@ export function PreferencesForm() {
               </p>
             </div>
             <Select value={dateFormat} onValueChange={(v) => v !== null && setDateFormat(v)}>
-              <SelectTrigger className="w-36 h-8 text-sm">
+              <SelectTrigger className="w-full sm:w-36 h-9 sm:h-8 text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -80,7 +80,7 @@ export function PreferencesForm() {
           <Separator />
 
           {/* Default Category */}
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
             <div>
               <Label className="text-sm font-medium">Default Category</Label>
               <p className="text-xs text-muted-foreground mt-0.5">
@@ -88,7 +88,7 @@ export function PreferencesForm() {
               </p>
             </div>
             <Select value={defaultCategory} onValueChange={(v) => v !== null && setDefaultCategory(v)}>
-              <SelectTrigger className="w-36 h-8 text-sm">
+              <SelectTrigger className="w-full sm:w-36 h-9 sm:h-8 text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -104,7 +104,7 @@ export function PreferencesForm() {
           <Separator />
 
           {/* Theme */}
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
             <div className="flex items-center gap-2">
               {theme === "dark" ? (
                 <Moon className="w-4 h-4 text-muted-foreground" />

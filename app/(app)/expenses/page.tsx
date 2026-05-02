@@ -102,24 +102,29 @@ export default function ExpensesPage() {
   }
 
   return (
-    <div className="p-6 space-y-5 max-w-5xl">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-5 max-w-5xl">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25, ease: "easeOut" }}
-        className="flex items-start justify-between gap-4"
+        className="flex items-start justify-between gap-3"
       >
-        <div>
-          <h1 className="text-xl font-bold tracking-tight">Expenses</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
+        <div className="min-w-0">
+          <h1 className="text-lg sm:text-xl font-bold tracking-tight">Expenses</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
             {filtered.length} transaction{filtered.length !== 1 ? "s" : ""} &middot; ₹
             {total.toLocaleString()} total
           </p>
         </div>
-        <Button onClick={handleAdd} size="sm" className="gap-1.5 h-8">
+        <Button
+          onClick={handleAdd}
+          size="sm"
+          className="gap-1.5 h-8 flex-shrink-0"
+        >
           <Plus className="w-3.5 h-3.5" />
-          Add Expense
+          <span className="hidden sm:inline">Add Expense</span>
+          <span className="sm:hidden">Add</span>
         </Button>
       </motion.div>
 

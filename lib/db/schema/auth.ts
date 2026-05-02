@@ -24,6 +24,9 @@ export const users = pgTable("users", {
     .default("Food")
     .notNull(),
   theme: varchar("theme", { length: 20 }).default("system").notNull(),
+  // IANA timezone name (e.g. 'Asia/Kolkata'). Set from the browser on first session;
+  // used by MCP tools so that "today" means the user's local today.
+  timezone: varchar("timezone", { length: 64 }).default("UTC").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 })

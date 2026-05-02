@@ -25,18 +25,18 @@ export function ExpenseFilters({
   onCategoryChange,
 }: ExpenseFiltersProps) {
   return (
-    <div className="flex gap-3 flex-wrap">
-      <div className="relative flex-1 min-w-48">
+    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+      <div className="relative flex-1 sm:min-w-48">
         <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
         <Input
           placeholder="Search expenses..."
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-8 h-8 text-sm"
+          className="pl-8 h-9 sm:h-8 text-sm"
         />
       </div>
       <Select value={category} onValueChange={(v) => v !== null && onCategoryChange(v)}>
-        <SelectTrigger className="w-40 h-8 text-sm">
+        <SelectTrigger className="w-full sm:w-40 h-9 sm:h-8 text-sm">
           <SelectValue placeholder="All categories" />
         </SelectTrigger>
         <SelectContent>

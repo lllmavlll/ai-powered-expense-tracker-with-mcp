@@ -17,6 +17,7 @@ export async function GET() {
       dateFormat: users.dateFormat,
       defaultCategory: users.defaultCategory,
       theme: users.theme,
+      timezone: users.timezone,
     })
     .from(users)
     .where(eq(users.id, userId))
@@ -35,7 +36,7 @@ export async function PATCH(req: NextRequest) {
 
   const body = await req.json()
 
-  const allowed = ["name", "email", "image", "currency", "dateFormat", "defaultCategory", "theme"] as const
+  const allowed = ["name", "email", "image", "currency", "dateFormat", "defaultCategory", "theme", "timezone"] as const
   const updateData: Record<string, unknown> = { updatedAt: new Date() }
 
   for (const key of allowed) {
@@ -55,6 +56,7 @@ export async function PATCH(req: NextRequest) {
       dateFormat: users.dateFormat,
       defaultCategory: users.defaultCategory,
       theme: users.theme,
+      timezone: users.timezone,
     })
 
   return NextResponse.json(row)

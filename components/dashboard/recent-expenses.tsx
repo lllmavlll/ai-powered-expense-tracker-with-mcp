@@ -49,20 +49,20 @@ export function RecentExpenses({ expenses }: { expenses: Expense[] }) {
                   delay: 0.36 + i * 0.06,
                   ease: "easeOut",
                 }}
-                className="flex items-center justify-between py-3"
+                className="flex items-center justify-between gap-3 py-3"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                   <Badge
                     variant="secondary"
                     className={cn(
-                      "text-xs font-medium rounded-md px-2 py-0.5 border-0",
+                      "text-xs font-medium rounded-md px-2 py-0.5 border-0 flex-shrink-0",
                       CATEGORY_COLORS[expense.category]
                     )}
                   >
                     {expense.category}
                   </Badge>
-                  <div>
-                    <p className="text-sm font-medium leading-tight">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium leading-tight truncate">
                       {expense.description}
                     </p>
                     <p className="text-xs text-muted-foreground">
@@ -70,7 +70,7 @@ export function RecentExpenses({ expenses }: { expenses: Expense[] }) {
                     </p>
                   </div>
                 </div>
-                <p className="text-sm font-semibold tabular-nums">
+                <p className="text-sm font-semibold tabular-nums flex-shrink-0">
                   ₹{expense.amount.toLocaleString()}
                 </p>
               </motion.div>
