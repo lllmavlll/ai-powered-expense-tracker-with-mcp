@@ -5,7 +5,6 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter"
 import bcrypt from "bcryptjs"
 import { eq } from "drizzle-orm"
 import {
-  db,
   getDb,
   users,
   accounts,
@@ -16,7 +15,7 @@ import {
 } from "@/lib/db"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: DrizzleAdapter(db, {
+  adapter: DrizzleAdapter(getDb(), {
     usersTable: users,
     accountsTable: accounts,
     sessionsTable: sessions,
@@ -98,6 +97,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     session({ session, token }) {
       if (token.id) session.user.id = token.id as string
+      if (token.name) session.user.name = token.name as string
+      if (token.email) session.user.email = token.email as string
+      if (token.picture) session.user.image = token.picture as string
       return session
     },
   },

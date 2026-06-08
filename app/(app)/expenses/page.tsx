@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, useCallback } from "react"
 import { motion } from "framer-motion"
 import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -21,7 +21,7 @@ export default function ExpensesPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [deletingExpense, setDeletingExpense] = useState<Expense | null>(null)
 
-  useEffect(() => {
+  const fetchExpenses = useCallback(() => {
     fetch("/api/expenses")
       .then((r) => r.json())
       .then((rows) =>
@@ -34,6 +34,15 @@ export default function ExpensesPage() {
         )
       )
   }, [])
+
+  useEffect(() => {
+    fetchExpenses()
+  }, [fetchExpenses])
+
+  useEffect(() => {
+    window.addEventListener("expense-data-changed", fetchExpenses)
+    return () => window.removeEventListener("expense-data-changed", fetchExpenses)
+  }, [fetchExpenses])
 
   const filtered = useMemo(() => {
     return expenses.filter((e) => {

@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { motion } from "framer-motion"
-import { signOut, useSession } from "next-auth/react"
+import { signOut } from "next-auth/react"
 import {
   LayoutDashboard,
   Receipt,
@@ -40,9 +40,34 @@ function initials(name?: string | null) {
     .toUpperCase()
 }
 
+type UserProfile = { name: string | null; email: string; image: string | null }
+
+function useUserProfile() {
+  const [profile, setProfile] = useState<UserProfile | null>(null)
+
+  const fetchProfile = useCallback(() => {
+    fetch("/api/user")
+      .then((r) => r.json())
+      .then((data: UserProfile) => setProfile(data))
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    fetchProfile()
+  }, [fetchProfile])
+
+  useEffect(() => {
+    window.addEventListener("profile-updated", fetchProfile)
+    return () => window.removeEventListener("profile-updated", fetchProfile)
+  }, [fetchProfile])
+
+  return profile
+}
+
 function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
-  const { data: session } = useSession()
+  const profile = useUserProfile()
+  const loading = profile === null
 
   return (
     <div className="flex h-full flex-col bg-sidebar">
@@ -85,23 +110,41 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
       {/* User */}
       <div className="border-t px-4 py-4">
         <div className="flex items-center gap-3">
-          <Avatar className="h-8 w-8">
-            {session?.user?.image && <AvatarImage src={session.user.image} />}
-            <AvatarFallback className="text-xs bg-primary/10 text-primary">
-              {initials(session?.user?.name)}
+          <Avatar className="h-8 w-8 flex-shrink-0">
+            {profile?.image && <AvatarImage src={profile.image} />}
+            <AvatarFallback
+              className={cn(
+                "text-xs",
+                loading
+                  ? "bg-muted animate-pulse"
+                  : "bg-primary/10 text-primary"
+              )}
+            >
+              {loading ? null : initials(profile?.name)}
             </AvatarFallback>
           </Avatar>
+          {/* The <p> tags stay mounted in both states so their text line-boxes
+              never change height — only the inner content swaps to a skeleton
+              bar, avoiding any layout shift. */}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate">
-              {session?.user?.name ?? "Account"}
+              {loading ? (
+                <span className="inline-block h-3 w-24 rounded bg-muted animate-pulse align-middle" />
+              ) : (
+                profile?.name ?? "Account"
+              )}
             </p>
             <p className="text-xs text-muted-foreground truncate">
-              {session?.user?.email ?? ""}
+              {loading ? (
+                <span className="inline-block h-2.5 w-32 rounded bg-muted animate-pulse align-middle" />
+              ) : (
+                profile?.email ?? ""
+              )}
             </p>
           </div>
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-accent"
+            className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-accent flex-shrink-0"
             title="Sign out"
           >
             <LogOut className="w-4 h-4" />

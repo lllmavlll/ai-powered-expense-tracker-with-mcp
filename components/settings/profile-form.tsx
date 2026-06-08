@@ -88,8 +88,9 @@ export function ProfileForm() {
         setError(data.error ?? "Failed to save")
         return
       }
-      // Refresh the session JWT so sidebar name/image updates immediately.
+      // Refresh session JWT and notify sidebar to re-fetch from DB.
       await update()
+      window.dispatchEvent(new CustomEvent("profile-updated"))
       setSaved(true)
       setTimeout(() => setSaved(false), 2000)
     } finally {
