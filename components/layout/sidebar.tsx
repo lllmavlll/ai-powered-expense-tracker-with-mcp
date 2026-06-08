@@ -14,7 +14,7 @@ import {
   Menu,
   Sparkles,
 } from "lucide-react"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -86,6 +86,7 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
       <div className="border-t px-4 py-4">
         <div className="flex items-center gap-3">
           <Avatar className="h-8 w-8">
+            {session?.user?.image && <AvatarImage src={session.user.image} />}
             <AvatarFallback className="text-xs bg-primary/10 text-primary">
               {initials(session?.user?.name)}
             </AvatarFallback>
