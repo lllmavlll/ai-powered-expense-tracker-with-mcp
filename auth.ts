@@ -2,6 +2,7 @@ import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import Google from "next-auth/providers/google"
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
+import { NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
 import { eq } from "drizzle-orm"
 import {
@@ -82,6 +83,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth(() => ({
     },
   },
   callbacks: {
+    // Runs in the proxy (middleware) to gate access. Redirect logic lives here
+    // because the lazy config form makes auth() async, so the auth((req)=>…)
+    // wrapper can't be used directly in proxy.ts.
+    authorized({ request, auth }) {
+      const isLoggedIn = !!auth
+      const { pathname } = request.nextUrl
+
+      const isAuthPage = pathname === "/login"
+      const isApiAuth = pathname.startsWith("/api/auth")
+      const isPublic = isAuthPage || isApiAuth
+
+      if (isLoggedIn && isAuthPage) {
+        return NextResponse.redirect(new URL("/dashboard", request.nextUrl))
+      }
+      // Returning false redirects unauthenticated users to pages.signIn (/login).
+      if (!isLoggedIn && !isPublic) return false
+      return true
+    },
     async jwt({ token, user, trigger }) {
       if (user) token.id = user.id
       // Re-fetch from DB when the client calls useSession().update() after a profile save.
