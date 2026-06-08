@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { IndianRupee, ReceiptText, CalendarDays } from "lucide-react"
 import { SummaryCard } from "@/components/dashboard/summary-card"
@@ -19,7 +19,7 @@ export default function DashboardPage() {
   const [summary, setSummary] = useState<SummaryData | null>(null)
   const [recent, setRecent] = useState<Expense[]>([])
 
-  useEffect(() => {
+  const fetchData = useCallback(() => {
     fetch("/api/expenses/summary")
       .then((r) => r.json())
       .then(setSummary)
@@ -36,6 +36,15 @@ export default function DashboardPage() {
         )
       )
   }, [])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
+  useEffect(() => {
+    window.addEventListener("expense-data-changed", fetchData)
+    return () => window.removeEventListener("expense-data-changed", fetchData)
+  }, [fetchData])
 
   const totalThisMonth = summary?.thisMonth.total ?? 0
   const count = summary?.thisMonth.count ?? 0

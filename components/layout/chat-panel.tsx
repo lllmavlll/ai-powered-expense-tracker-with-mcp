@@ -66,14 +66,22 @@ function ChatBody() {
 }
 
 export function ChatPanel() {
-  const { isOpen, closeChat } = useChat()
+  const { isOpen, closeChat, hydrated } = useChat()
 
   return (
     <>
       {/* Desktop: inline animated panel */}
       <motion.div
+        // Render collapsed in the SSR/pre-hydration paint so a closed panel
+        // never flashes open at its intrinsic content width before JS runs.
+        initial={{ width: 0 }}
         animate={{ width: isOpen ? 400 : 0 }}
-        transition={{ type: "spring", damping: 30, stiffness: 280 }}
+        // Snap to the restored width on first paint; animate user toggles after.
+        transition={
+          hydrated
+            ? { type: "spring", damping: 30, stiffness: 280 }
+            : { duration: 0 }
+        }
         className="hidden lg:block flex-shrink-0 overflow-hidden border-l bg-background"
       >
         <div className="w-[400px] h-full">
@@ -96,7 +104,8 @@ export function ChatPanel() {
             />
             <motion.div
               key="chat-mobile"
-              initial={{ x: "100%" }}
+              // Skip the slide-in when restoring an already-open panel on refresh.
+              initial={hydrated ? { x: "100%" } : false}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
