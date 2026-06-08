@@ -8,7 +8,6 @@ import { ExpenseFilters } from "@/components/expenses/expense-filters"
 import { ExpenseTable } from "@/components/expenses/expense-table"
 import { ExpenseDialog } from "@/components/expenses/expense-dialog"
 import { DeleteDialog } from "@/components/expenses/delete-dialog"
-import { ChatFAB } from "@/components/expenses/chat-fab"
 import { Expense } from "@/lib/mock-data"
 
 export default function ExpensesPage() {
@@ -170,8 +169,6 @@ export default function ExpensesPage() {
         onConfirm={handleConfirmDelete}
       />
 
-      {/* AI Chat FAB */}
-      <ChatFAB />
     </div>
   )
 }

@@ -10,16 +10,8 @@ import { MessageBubble } from "@/components/chat/message-bubble"
 import { TypingIndicator } from "@/components/chat/typing-indicator"
 import { ChatInput } from "@/components/chat/chat-input"
 
-const MOCK_RESPONSES = [
-  "Got it! I've added that expense for you.",
-  "Here's a summary of your spending this month: ₹10,556 across 15 transactions.",
-  "Your top spending category is Shopping at ₹6,298 this month.",
-  "Done! The expense has been updated.",
-  "I can see you spent ₹3,130 on Food this month. That's about 30% of your total.",
-]
-
 function ChatBody() {
-  const { closeChat, messages, addMessage, isTyping, setIsTyping } = useChat()
+  const { closeChat, messages, sendMessage, isTyping } = useChat()
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -27,15 +19,7 @@ function ChatBody() {
   }, [messages, isTyping])
 
   const handleSend = (content: string) => {
-    addMessage({ role: "user", content })
-    setIsTyping(true)
-
-    setTimeout(() => {
-      setIsTyping(false)
-      const response =
-        MOCK_RESPONSES[Math.floor(Math.random() * MOCK_RESPONSES.length)]
-      addMessage({ role: "assistant", content: response })
-    }, 1200 + Math.random() * 800)
+    void sendMessage(content)
   }
 
   return (

@@ -1,6 +1,7 @@
 import { Sidebar, MobileTopbar } from "@/components/layout/sidebar"
 import { ChatPanel } from "@/components/layout/chat-panel"
 import { TimezoneSync } from "@/components/layout/timezone-sync"
+import { ChatFAB } from "@/components/expenses/chat-fab"
 
 export default function AppLayout({
   children,
@@ -18,6 +19,7 @@ export default function AppLayout({
           <ChatPanel />
         </div>
       </div>
+      <ChatFAB />
     </div>
   )
 }
