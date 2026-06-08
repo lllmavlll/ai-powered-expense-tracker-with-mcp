@@ -14,7 +14,11 @@ import {
   DEFAULT_CATEGORIES,
 } from "@/lib/db"
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+// Lazy config: NextAuth evaluates this per request, not at module import, so
+// the DB connection (which needs DATABASE_URL) is never created at build time
+// when Next.js collects page data. DrizzleAdapter needs the real db instance
+// (not the lazy proxy) for its dialect detection, hence getDb() here.
+export const { handlers, auth, signIn, signOut } = NextAuth(() => ({
   adapter: DrizzleAdapter(getDb(), {
     usersTable: users,
     accountsTable: accounts,
@@ -103,4 +107,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session
     },
   },
-})
+}))
