@@ -1,26 +1,39 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
+import Google from "next-auth/providers/google"
+import { DrizzleAdapter } from "@auth/drizzle-adapter"
 import bcrypt from "bcryptjs"
 import { eq } from "drizzle-orm"
-import { getDb, users } from "@/lib/db"
+import {
+  db,
+  getDb,
+  users,
+  accounts,
+  sessions,
+  verificationTokens,
+  categories,
+  DEFAULT_CATEGORIES,
+} from "@/lib/db"
 
-/**
- * JWT strategy — no DrizzleAdapter needed.
- * Sessions are stateless JWTs stored in cookies.
- * User creation is handled by our custom /api/auth/register endpoint.
- * The accounts/sessions/verificationTokens tables remain in the schema
- * for future OAuth provider support.
- */
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  adapter: DrizzleAdapter(db, {
+    usersTable: users,
+    accountsTable: accounts,
+    sessionsTable: sessions,
+    verificationTokensTable: verificationTokens,
+  }),
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
   providers: [
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
     Credentials({
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      // getDb() is called inside the async callback — only at request time, not build time
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null
 
@@ -47,9 +60,40 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  events: {
+    // Seed default categories for new OAuth (Google) sign-ups.
+    // Credentials users are seeded in /api/auth/register.
+    async createUser({ user }) {
+      if (!user.id) return
+      await getDb()
+        .insert(categories)
+        .values(
+          DEFAULT_CATEGORIES.map((cat) => ({
+            userId: user.id!,
+            name: cat.name,
+            color: cat.color,
+            isDefault: true,
+          }))
+        )
+        .catch(() => {})
+    },
+  },
   callbacks: {
-    jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) token.id = user.id
+      // Re-fetch from DB when the client calls useSession().update() after a profile save.
+      if (trigger === "update" && token.id) {
+        const [fresh] = await getDb()
+          .select({ name: users.name, email: users.email, image: users.image })
+          .from(users)
+          .where(eq(users.id, token.id as string))
+          .limit(1)
+        if (fresh) {
+          token.name = fresh.name
+          token.email = fresh.email
+          token.picture = fresh.image
+        }
+      }
       return token
     },
     session({ session, token }) {
