@@ -1,5 +1,6 @@
 import { ProfileForm } from "@/components/settings/profile-form"
 import { PreferencesForm } from "@/components/settings/preferences-form"
+import { BYOKSection } from "@/components/settings/byok-section"
 import { ApiKeysSection } from "@/components/settings/api-keys-section"
 
 export default function SettingsPage() {
@@ -13,6 +14,7 @@ export default function SettingsPage() {
       </div>
       <ProfileForm />
       <PreferencesForm />
+      <BYOKSection />
       <ApiKeysSection />
     </div>
   )

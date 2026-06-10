@@ -37,3 +37,10 @@ export {
   type McpApiKey,
   type NewMcpApiKey,
 } from "./schema/mcp"
+
+// BYOK (per-user AI provider keys)
+export {
+  userAiKeys,
+  type UserAiKey,
+  type NewUserAiKey,
+} from "./schema/ai-keys"

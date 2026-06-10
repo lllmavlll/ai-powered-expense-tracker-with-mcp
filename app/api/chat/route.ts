@@ -5,6 +5,8 @@ import { generateText, stepCountIs, type ModelMessage } from "ai"
 import { getDb, chatSessions, chatMessages, users } from "@/lib/db"
 import { requireAuth } from "@/lib/auth-helpers"
 import { getChatModel } from "@/lib/ai-model"
+import { getUserModelConfig } from "@/lib/byok"
+import { checkChatRateLimit } from "@/lib/rate-limit"
 import { mintMcpJwt } from "@/lib/mcp-jwt"
 
 function buildSystemPrompt(opts: { today: string; timezone: string; currency: string }) {
@@ -59,7 +61,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Session not found" }, { status: 404 })
   }
 
-  const { model, missingKeyError } = getChatModel()
+  // BYOK: if the user brought their own key, use it and skip the house-key
+  // daily quota (they pay for their own usage).
+  const userKey = await getUserModelConfig(userId)
+
+  // Rate limit before persisting so the new message isn't counted against
+  // itself. Burst limit applies to everyone; the daily cap only to house-key
+  // users.
+  const limit = await checkChatRateLimit(userId, { skipDaily: !!userKey })
+  if (!limit.ok) {
+    return NextResponse.json(
+      { error: limit.error },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfterSec) } }
+    )
+  }
+
+  const { model, missingKeyError } = getChatModel(userKey)
   if (missingKeyError) {
     return NextResponse.json({ error: missingKeyError }, { status: 503 })
   }
