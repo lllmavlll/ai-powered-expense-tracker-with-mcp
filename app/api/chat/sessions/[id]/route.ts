@@ -31,3 +31,25 @@ export async function GET(
 
   return NextResponse.json({ session, messages })
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { userId, error } = await requireAuth()
+  if (error) return error
+
+  const { id } = await params
+
+  // Scope the delete to the owner; messages cascade via the FK constraint.
+  const [deleted] = await getDb()
+    .delete(chatSessions)
+    .where(and(eq(chatSessions.id, id), eq(chatSessions.userId, userId)))
+    .returning({ id: chatSessions.id })
+
+  if (!deleted) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 })
+  }
+
+  return NextResponse.json({ ok: true })
+}

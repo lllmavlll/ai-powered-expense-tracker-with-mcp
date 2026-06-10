@@ -2,21 +2,30 @@
 
 import { useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, Sparkles } from "lucide-react"
+import { X, Sparkles, Plus, History } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useChat } from "@/context/chat-context"
 import { MessageBubble } from "@/components/chat/message-bubble"
 import { TypingIndicator } from "@/components/chat/typing-indicator"
 import { ChatInput } from "@/components/chat/chat-input"
+import { ChatHistory } from "@/components/chat/chat-history"
 
 function ChatBody() {
-  const { closeChat, messages, sendMessage, isTyping } = useChat()
+  const {
+    closeChat,
+    messages,
+    sendMessage,
+    isTyping,
+    view,
+    showHistory,
+    newChat,
+  } = useChat()
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages, isTyping])
+    if (view === "chat") bottomRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages, isTyping, view])
 
   const handleSend = (content: string) => {
     void sendMessage(content)
@@ -37,30 +46,58 @@ function ChatBody() {
             </p>
           </div>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={closeChat}
-          className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground"
-          aria-label="Close chat"
-        >
-          <X className="w-4 h-4" />
-        </Button>
+        <div className="flex items-center gap-0.5">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={newChat}
+            className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground"
+            aria-label="New chat"
+            title="New chat"
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={showHistory}
+            className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground"
+            aria-label="Chat history"
+            title="Chat history"
+          >
+            <History className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={closeChat}
+            className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground"
+            aria-label="Close chat"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
 
-      {/* Messages */}
-      <ScrollArea className="flex-1 px-4 py-4">
-        <div className="space-y-4">
-          {messages.map((message) => (
-            <MessageBubble key={message.id} message={message} />
-          ))}
-          {isTyping && <TypingIndicator />}
-          <div ref={bottomRef} />
-        </div>
-      </ScrollArea>
+      {view === "history" ? (
+        <ChatHistory />
+      ) : (
+        <>
+          {/* Messages */}
+          <ScrollArea className="flex-1 px-4 py-4">
+            <div className="space-y-4">
+              {messages.map((message) => (
+                <MessageBubble key={message.id} message={message} />
+              ))}
+              {isTyping && <TypingIndicator />}
+              <div ref={bottomRef} />
+            </div>
+          </ScrollArea>
 
-      {/* Input */}
-      <ChatInput onSend={handleSend} disabled={isTyping} />
+          {/* Input */}
+          <ChatInput onSend={handleSend} disabled={isTyping} />
+        </>
+      )}
     </div>
   )
 }
